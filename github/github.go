@@ -105,6 +105,11 @@ Pages:
                 followers {
                   totalCount
                 }
+                repositories(first: 100) {
+                  nodes {
+                    stargazerCount
+                  }
+                }
                 contributionsCollection {
                   contributionCalendar {
                     totalContributions
@@ -199,6 +204,13 @@ Pages:
 				}
 
 				followerCount := int(userNode["followers"].(map[string]interface{})["totalCount"].(float64))
+				starCount := 0
+
+				repoNodes := userNode["repositories"].(map[string]interface{})["nodes"].([]interface{})
+				for _, repoNode := range repoNodes {
+					starCount += int(repoNode.(map[string]interface{})["stargazerCount"].(float64))
+				}
+
 				contributionsCollection := userNode["contributionsCollection"].(map[string]interface{})
 				contributionCount := int(contributionsCollection["contributionCalendar"].(map[string]interface{})["totalContributions"].(float64))
 				privateContributionCount := int(contributionsCollection["restrictedContributionsCount"].(float64))
@@ -212,6 +224,7 @@ Pages:
 					Company:                  company,
 					Organizations:            organizations,
 					FollowerCount:            followerCount,
+					StarCount:                starCount,
 					ContributionCount:        contributionCount,
 					PublicContributionCount:  (contributionCount - privateContributionCount),
 					PrivateContributionCount: privateContributionCount,
@@ -282,6 +295,7 @@ type User struct {
 	Company                  string
 	Organizations            []string
 	FollowerCount            int
+	StarCount                int
 	ContributionCount        int
 	PublicContributionCount  int
 	PrivateContributionCount int
