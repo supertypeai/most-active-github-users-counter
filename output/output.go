@@ -33,17 +33,19 @@ func PlainOutput(results github.GithubSearchResults, writer io.Writer, options t
 func CsvOutput(results github.GithubSearchResults, writer io.Writer, options top.Options) error {
 	users := GithubUserList(results.Users)
 	w := csv.NewWriter(writer)
-	if err := w.Write([]string{"rank", "name", "login", "contributions", "company", "organizations"}); err != nil {
+	if err := w.Write([]string{"rank", "name", "login", "followers", "stars", "contributions", "company", "organizations"}); err != nil {
 		return err
 	}
 	for i, user := range users {
 		rank := strconv.Itoa(i + 1)
 		name := user.Name
 		login := user.Login
+		followers := strconv.Itoa(user.FollowerCount)
+		stars := strconv.Itoa(user.StarCount)
 		contribs := strconv.Itoa(user.ContributionCount)
 		orgs := strings.Join(user.Organizations, ",")
 		company := user.Company
-		if err := w.Write([]string{rank, name, login, contribs, company, orgs}); err != nil {
+		if err := w.Write([]string{rank, name, login, followers, stars, contribs, company, orgs}); err != nil {
 			return err
 		}
 	}
